@@ -3,6 +3,13 @@ name: Azure Login
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ENVIRONMENT: TEST
+
 jobs:
   login:
     runs-on: ubuntu-latest
