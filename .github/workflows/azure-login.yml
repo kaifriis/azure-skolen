@@ -14,6 +14,10 @@ jobs:
   login:
     runs-on: ubuntu-latest
     steps:
+    - name: Clear Azure CLI Account
+      run: |
+        az account clear
+    
     - name: Checkout
       uses: actions/checkout@v2
 
