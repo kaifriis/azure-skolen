@@ -19,4 +19,5 @@ jobs:
 
     - name: Test Azure Connection
       run: |
+        echo "Running in environment: ${{ env.ENVIRONMENT }}"
         az account show
