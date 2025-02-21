@@ -1,7 +1,10 @@
 name: Build and Deploy .NET Web App
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - '**'  # This will trigger the workflow on push to any branch
+  workflow_dispatch:  # This will allow you to manually trigger the workflow from the Actions tab
 
 jobs:
   build:
