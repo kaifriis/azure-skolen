@@ -7,12 +7,10 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  ENVIRONMENT: TEST
-
 jobs:
   login:
     runs-on: ubuntu-latest
+    environment: TEST
     steps:
     - name: Clear Azure CLI Account
       run: |
