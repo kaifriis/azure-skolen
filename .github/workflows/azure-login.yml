@@ -1,0 +1,32 @@
+name: Azure Login
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  login:
+    runs-on: ubuntu-latest
+    environment: TEST
+    steps:
+    - name: Clear Azure CLI Account
+      run: |
+        az account clear
+    
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Test Azure Connection
+      run: |
+        echo "Running in environment: ${{ env.ENVIRONMENT }}"
+        az account show
