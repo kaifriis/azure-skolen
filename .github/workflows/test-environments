@@ -2,6 +2,9 @@ name: Echo Environment Variable
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - '**' 
 
 jobs:
   echo-variable:
