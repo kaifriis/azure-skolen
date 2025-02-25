@@ -7,6 +7,7 @@ on:
     branches:
       - '**'  # Triggers on push to any branch - useful for development
   workflow_dispatch:  # Enables manual trigger from GitHub UI - helpful for testing
+  workflow_call:  # Enables calling this workflow from another workflow
 
 # Jobs are the main building blocks of a workflow
 jobs:
