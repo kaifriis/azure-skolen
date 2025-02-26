@@ -1,0 +1,20 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  login:
+    uses: ./.github/workflows/azure-login.yml
+    secrets: inherit
+
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    needs: [build, login]

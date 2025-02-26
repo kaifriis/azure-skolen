@@ -1,7 +1,8 @@
 name: Azure Login
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: 
+  workflow_call:
 
 permissions:
   id-token: write
@@ -11,6 +12,7 @@ jobs:
   login:
     runs-on: ubuntu-latest
     environment: TEST
+
     steps:
     - name: Clear Azure CLI Account
       run: |
@@ -19,10 +21,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+
     - name: Azure Login
       uses: azure/login@v1
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }} 
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
