@@ -1,9 +1,6 @@
 name: Build and Deploy .NET Web App
 
 on:
-  push:
-    branches:
-      - '**'  
   workflow_dispatch: 
   workflow_call:
 
