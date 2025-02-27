@@ -19,10 +19,26 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
+      
+    - name: List discovered tests
+      run: dotnet test AzureWorkshopAppTests/AzureWorkshopAppTests.csproj --list-tests
 
-    - name: Run tests
+    - name: Run tests with detailed logging
       run: |
-        dotnet test AzureWorkshopAppTests/AzureWorkshopAppTests.csproj\
-          --configuration Release\
-          --no-restore\
-          --verbosity normal
+        dotnet test AzureWorkshopAppTests/AzureWorkshopAppTests.csproj \
+          --configuration Release \
+          --no-restore \
+          --verbosity detailed \
+          --logger "console;verbosity=detailed" \
+          --logger "trx;LogFileName=test-results.trx" \
+          --blame-crash \
+          --diag test_diagnostic.txt
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          TestResults/test-results.trx
+          test_diagnostic.txt
