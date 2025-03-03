@@ -7,7 +7,10 @@ permissions:
 on:
   push:
     branches:
-      - '**'
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -18,7 +21,16 @@ jobs:
     uses: ./.github/workflows/test.yml
     needs: [build]
 
-  deploy:
-    uses: ./.github/workflows/deploy.yml
+  deploy-test:
+    uses: ./.github/workflows/deploy-azure.yml
+    with:
+      releaseType: 'TEST'  # input parameter
     secrets: inherit
-    needs: [build, test]
+    needs: [test]
+
+  deploy-prod:
+      uses: ./.github/workflows/deploy-azure.yml
+      with:
+        releaseType: 'production'
+      secrets: inherit
+      needs: [deploy-test] 
