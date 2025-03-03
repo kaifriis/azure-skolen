@@ -21,9 +21,16 @@ jobs:
     uses: ./.github/workflows/test.yml
     needs: [build]
 
-  deploy:
+  deploy-test:
     uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'TEST'  # input parameter
     secrets: inherit
-    needs: [build, test]
+    needs: [test]
+
+  deploy-prod:
+      uses: ./.github/workflows/deploy-azure.yml
+      with:
+        releaseType: 'production'
+      secrets: inherit
+      needs: [deploy-test] 
