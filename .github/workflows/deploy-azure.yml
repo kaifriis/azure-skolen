@@ -3,8 +3,7 @@ name: Deploy to Azure
 on:
   push:
     tags:
-      - 'azureskl'  # This will match my federated credential tag
-  workflow_dispatch: 
+      - 'azureskl'  # This triggers on tag push only
   workflow_call:
     inputs:
       releaseType:
