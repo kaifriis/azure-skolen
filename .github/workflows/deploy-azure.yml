@@ -1,8 +1,9 @@
 name: Deploy to Azure
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'azureskl'  # This will match my federated credential tag
   workflow_dispatch: 
   workflow_call:
     inputs:
@@ -15,8 +16,6 @@ on:
 jobs:
   deploy:
     name: Deploy to ${{ inputs.releaseType }}
-    environment: ${{ inputs.releaseType }}
-
     runs-on: ubuntu-latest
     
     steps:
