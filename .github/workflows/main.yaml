@@ -14,6 +14,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  validate-infrastructure:
+    uses: ./.github/workflows/iac-test-validate.yml
+    with:
+      environment: 'dev'
+      location: 'norwayeast'
+    secrets: inherit
+
   build:
     uses: ./.github/workflows/build.yml
 
@@ -33,4 +40,4 @@ jobs:
       with:
         releaseType: 'production'
       secrets: inherit
-      needs: [deploy-test] 
+      needs: [deploy-test]

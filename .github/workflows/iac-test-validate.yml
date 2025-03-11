@@ -4,6 +4,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  ENVIRONMENT_NAME: 'dev'
+  AZURE_LOCATION: 'norwayeast'
+
 on:
   push:
     branches:
@@ -16,8 +20,8 @@ on:
 jobs:
     deploy-infrastructure:
       runs-on: ubuntu-latest
-      env:
-        RESOURCE_GROUP: your-resource-group-name
+      outputs:
+        resourceGroupName: ${{ steps.deploy.outputs.resourceGroupName }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -33,10 +37,19 @@ jobs:
           uses: azure/cli@v1
           with:
             inlineScript: |
-              echo "Starting Bicep build validation..."
-              az bicep build --file bicep/main.bicep
-              echo "Bicep build completed successfully"
-              
-              echo "Starting Bicep lint validation..."
+              az bicep build --file bicep/main.bicep \
+                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} \
+                --parameters location=${{ env.AZURE_LOCATION }}
               az bicep lint --file bicep/main.bicep
-              echo "Bicep lint validation completed successfully"
+
+        - name: Deploy Bicep
+          id: deploy
+          uses: azure/arm-deploy@v1
+          with:
+            scope: subscription
+            region: ${{ env.AZURE_LOCATION }}
+            template: ./bicep/main.bicep
+            parameters: 
+              environmentName=${{ env.ENVIRONMENT_NAME }}
+              location=${{ env.AZURE_LOCATION }}
+            failOnStdErr: false

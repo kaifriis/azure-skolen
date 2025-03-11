@@ -7,7 +7,6 @@ var tags = {
   project: 'Azure Workshop'
 }
 
-// Resource section
 targetScope = 'subscription'
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -16,6 +15,8 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   tags: tags
 }
 
+output resourceGroupName string = rg.name
+
 module storageAccount 'modules/storageAccount.bicep' = {
   scope: rg
   name: 'st-${environmentName}'
@@ -23,5 +24,5 @@ module storageAccount 'modules/storageAccount.bicep' = {
     location: location
     tags: tags
   }
-} 
+}
 
