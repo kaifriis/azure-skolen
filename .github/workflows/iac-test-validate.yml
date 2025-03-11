@@ -37,9 +37,7 @@ jobs:
           uses: azure/cli@v1
           with:
             inlineScript: |
-              az bicep build --file bicep/main.bicep \
-                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} \
-                --parameters location=${{ env.AZURE_LOCATION }}
+              az bicep build --file bicep/main.bicep
               az bicep lint --file bicep/main.bicep
 
         - name: Deploy Bicep
