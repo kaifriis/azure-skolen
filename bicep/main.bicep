@@ -25,4 +25,3 @@ module storageAccount 'modules/storageAccount.bicep' = {
     tags: tags
   }
 }
-
