@@ -7,7 +7,7 @@ permissions:
 env:
   ENVIRONMENT_NAME: 'TEST'
   AZURE_LOCATION: 'norwayeast'
-  RESOURCE_GROUP_NAME: ''
+  RESOURCE_GROUP_NAME: 'rg-azskolen-test'
 
 on:
   push:
