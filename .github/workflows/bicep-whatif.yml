@@ -1,0 +1,57 @@
+name: IaC bicep validate
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  ENVIRONMENT_NAME: 'TEST'
+  AZURE_LOCATION: 'norwayeast'
+  RESOURCE_GROUP_NAME: 'rg-azskolen-test'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+    bicep-whatif:
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+  
+        - name: Azure Login
+          uses: azure/login@v2
+          with:
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+        - name: Bicep lint
+          uses: azure/cli@v1
+          with:
+            inlineScript: |
+              az bicep build --file bicep/main.bicep
+              az bicep lint --file bicep/main.bicep
+
+        - name: "Bicep whatif"
+          id: whatif
+          uses: Azure/arm-deploy@v1
+          with:
+            scope: resourcegroup
+            resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+            template: ./bicep/main.bicep
+            parameters: 
+              environmentName=${{ env.ENVIRONMENT_NAME }}
+              location=${{ env.AZURE_LOCATION }}
+            failOnStdErr: false
+            deploymentMode: 'Incremental'
+            deploymentWhatIf: true
+            deploymentWhatIfResultFormat: 'FullResourcePayloads'
