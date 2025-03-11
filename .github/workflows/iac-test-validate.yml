@@ -7,6 +7,7 @@ permissions:
 env:
   ENVIRONMENT_NAME: 'TEST'
   AZURE_LOCATION: 'norwayeast'
+  RESOURCE_GROUP_NAME: 'rg-azskolen-test'
 
 on:
   push:
@@ -20,8 +21,6 @@ on:
 jobs:
     deploy-infrastructure:
       runs-on: ubuntu-latest
-      outputs:
-        resourceGroupName: ${{ steps.deploy.outputs.resourceGroupName }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -42,10 +41,10 @@ jobs:
 
         - name: Deploy Bicep
           id: deploy
-          uses: azure/arm-deploy@v1
+          uses: Azure/arm-deploy@v1
           with:
-            scope: subscription
-            region: ${{ env.AZURE_LOCATION }}
+            scope: resourcegroup
+            resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
             template: ./bicep/main.bicep
             parameters: 
               environmentName=${{ env.ENVIRONMENT_NAME }}
