@@ -3,7 +3,7 @@ name: IaC bicep validate
 permissions:
   id-token: write
   contents: read
-  pull-requests: write  # Add permission to write PR comments
+  pull-requests: write
 
 env:
   ENVIRONMENT_NAME: 'TEST'
@@ -20,8 +20,9 @@ on:
   workflow_dispatch:
 
 jobs:
-    whatif-analysis:
+    bicep-whatif:
       runs-on: ubuntu-latest
+
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -40,21 +41,8 @@ jobs:
               az bicep build --file bicep/main.bicep
               az bicep lint --file bicep/main.bicep
 
-        - name: Bicep Validate
-          uses: Azure/cli@v1
-          with:
-            inlineScript: |
-              az deployment group validate \
-                --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-                --template-file ./bicep/main.bicep \
-                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} \
-                location=${{ env.AZURE_LOCATION }} \
-                --mode Incremental
-                    
-
-
-        - name: Deploy Bicep
-          id: deploy
+        - name: "Bicep whatif"
+          id: whatif
           uses: Azure/arm-deploy@v1
           with:
             scope: resourcegroup
@@ -64,3 +52,6 @@ jobs:
               environmentName=${{ env.ENVIRONMENT_NAME }}
               location=${{ env.AZURE_LOCATION }}
             failOnStdErr: false
+            deploymentMode: 'Incremental'
+            deploymentWhatIf: true
+            deploymentWhatIfResultFormat: 'FullResourcePayloads'
