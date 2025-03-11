@@ -33,5 +33,10 @@ jobs:
           uses: azure/cli@v1
           with:
             inlineScript: |
+              echo "Starting Bicep build validation..."
               az bicep build --file bicep/main.bicep
+              echo "Bicep build completed successfully"
+              
+              echo "Starting Bicep lint validation..."
               az bicep lint --file bicep/main.bicep
+              echo "Bicep lint validation completed successfully"
