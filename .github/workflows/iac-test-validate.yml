@@ -5,7 +5,7 @@ permissions:
   contents: read
 
 env:
-  ENVIRONMENT_NAME: 'dev'
+  ENVIRONMENT_NAME: 'TEST'
   AZURE_LOCATION: 'norwayeast'
 
 on:
