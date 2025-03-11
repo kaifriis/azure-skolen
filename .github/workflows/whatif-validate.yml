@@ -1,0 +1,107 @@
+name: IaC bicep validate
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write  # Add permission to write PR comments
+
+env:
+  ENVIRONMENT_NAME: 'TEST'
+  AZURE_LOCATION: 'norwayeast'
+  RESOURCE_GROUP_NAME: 'rg-azskolen-test'
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+
+jobs:
+    whatif-analysis:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+  
+        - name: Azure Login
+          uses: azure/login@v2
+          with:
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+        - name: Bicep lint
+          uses: azure/cli@v1
+          with:
+            inlineScript: |
+              az bicep build --file bicep/main.bicep
+              az bicep lint --file bicep/main.bicep
+
+        - name: Bicep Validate
+          uses: Azure/cli@v1
+          with:
+            inlineScript: |
+              az deployment group validate \
+                --name validate-${{ github.run_id }} \
+                --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+                --template-file ./bicep/main.bicep 
+        
+        - name: "What if"
+          uses: Azure/cli@v1
+          with:
+            inlineScript: |
+              az deployment group what-if \
+                --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+                --template-file ./bicep/main.bicep \
+                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} \
+                --output json | jq -r '.changes[] | "\(.changeType) - \(.targetResource.type) - \(.targetResource.name)"' > whatif.txt
+
+        - name: Display WhatIf Results
+          shell: bash
+          run: |
+            echo "## WhatIf Analysis Results"
+            echo "Changes that will be applied:"
+            echo "----------------------------"
+            while IFS= read -r line; do
+              echo "• $line"
+            done < whatif.txt
+
+        - name: Upload WhatIf Result
+          uses: actions/upload-artifact@v3
+          with:
+            name: whatif-result
+            path: whatif.txt
+            retention-days: 5
+
+        - name: Post WhatIf to PR
+          if: github.event_name == 'pull_request'
+          uses: actions/github-script@v6
+          with:
+            script: |
+              const fs = require('fs');
+              const whatif = fs.readFileSync('whatif.txt', 'utf8');
+              const body = `## Infrastructure Changes Preview
+              \`\`\`
+              ${whatif}
+              \`\`\``;
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+
+        - name: Deploy Bicep
+          id: deploy
+          uses: Azure/arm-deploy@v1
+          with:
+            scope: resourcegroup
+            resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+            template: ./bicep/main.bicep
+            parameters: 
+              environmentName=${{ env.ENVIRONMENT_NAME }}
+              location=${{ env.AZURE_LOCATION }}
+            failOnStdErr: false

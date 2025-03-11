@@ -3,7 +3,6 @@ name: IaC bicep validate
 permissions:
   id-token: write
   contents: read
-  pull-requests: write  # Add permission to write PR comments
 
 env:
   ENVIRONMENT_NAME: 'TEST'
@@ -49,17 +48,6 @@ jobs:
                 --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
                 --template-file ./bicep/main.bicep 
         
-        - name: "What if"
-          uses: Azure/cli@v1
-          with:
-            inlineScript: |
-              az deployment group what-if \
-                --name what-if-${{ github.run_id }} \
-                --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-                --template-file ./bicep/main.bicep \
-                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} > whatif.json   
-
-
         - name: Deploy Bicep
           id: deploy
           uses: Azure/arm-deploy@v1
