@@ -3,7 +3,6 @@ name: IaC bicep validate
 permissions:
   id-token: write
   contents: read
-  pull-requests: write  # Add permission to write PR comments
 
 env:
   ENVIRONMENT_NAME: 'TEST'
@@ -11,16 +10,16 @@ env:
   RESOURCE_GROUP_NAME: 'rg-azskolen-test'
 
 on:
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-    whatif-analysis:
+    validate:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
@@ -37,30 +36,26 @@ jobs:
           uses: azure/cli@v1
           with:
             inlineScript: |
+              set -e
+              echo "Running Bicep build..."
               az bicep build --file bicep/main.bicep
+              echo "Running Bicep lint..."
               az bicep lint --file bicep/main.bicep
 
         - name: Bicep Validate
+          if: success()
           uses: Azure/cli@v1
           with:
             inlineScript: |
+              set -e
+              echo "Validating Bicep template..."
               az deployment group validate \
                 --name validate-${{ github.run_id }} \
                 --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
                 --template-file ./bicep/main.bicep 
         
-        - name: "What if"
-          uses: Azure/cli@v1
-          with:
-            inlineScript: |
-              az deployment group what-if \
-                --name what-if-${{ github.run_id }} \
-                --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-                --template-file ./bicep/main.bicep \
-                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} > whatif.json   
-
-
         - name: Deploy Bicep
+          if: success()
           id: deploy
           uses: Azure/arm-deploy@v1
           with:

@@ -54,11 +54,45 @@ jobs:
           with:
             inlineScript: |
               az deployment group what-if \
-                --name what-if-${{ github.run_id }} \
                 --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
                 --template-file ./bicep/main.bicep \
-                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} > whatif.json   
+                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} \
+                --output json | jq -r '.changes[] | "\(.changeType) - \(.targetResource.type) - \(.targetResource.name)"' > whatif.txt
 
+        - name: Display WhatIf Results
+          shell: bash
+          run: |
+            echo "## WhatIf Analysis Results"
+            echo "Changes that will be applied:"
+            echo "----------------------------"
+            while IFS= read -r line; do
+              echo "• $line"
+            done < whatif.txt
+
+        - name: Upload WhatIf Result
+          uses: actions/upload-artifact@v3
+          with:
+            name: whatif-result
+            path: whatif.txt
+            retention-days: 5
+
+        - name: Post WhatIf to PR
+          if: github.event_name == 'pull_request'
+          uses: actions/github-script@v6
+          with:
+            script: |
+              const fs = require('fs');
+              const whatif = fs.readFileSync('whatif.txt', 'utf8');
+              const body = `## Infrastructure Changes Preview
+              \`\`\`
+              ${whatif}
+              \`\`\``;
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
 
         - name: Deploy Bicep
           id: deploy
