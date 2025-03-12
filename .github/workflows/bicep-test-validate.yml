@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    validate:
+    validate-bicep:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
