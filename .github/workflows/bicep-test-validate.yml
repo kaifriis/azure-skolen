@@ -17,9 +17,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+  workflow_call:
 
 jobs:
     validate-bicep:
+      name: Validate Bicep
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
