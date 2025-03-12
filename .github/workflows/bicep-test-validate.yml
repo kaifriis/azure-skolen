@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    whatif-analysis:
+    validate:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
@@ -36,19 +36,26 @@ jobs:
           uses: azure/cli@v1
           with:
             inlineScript: |
+              set -e
+              echo "Running Bicep build..."
               az bicep build --file bicep/main.bicep
+              echo "Running Bicep lint..."
               az bicep lint --file bicep/main.bicep
 
         - name: Bicep Validate
+          if: success()
           uses: Azure/cli@v1
           with:
             inlineScript: |
+              set -e
+              echo "Validating Bicep template..."
               az deployment group validate \
                 --name validate-${{ github.run_id }} \
                 --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
                 --template-file ./bicep/main.bicep 
         
         - name: Deploy Bicep
+          if: success()
           id: deploy
           uses: Azure/arm-deploy@v1
           with:
