@@ -5,12 +5,16 @@ permissions:
   contents: read
 
 on:
-#  push:
-#    branches:
-#      - main
-#  pull_request:
-#    branches:
-#      - main
+  push:
+    branches: [ main ]
+    paths:
+      - 'AzureWorkshopApp/**'
+      - '.github/workflows/build-deploy-app.yml'
+      - '.github/workflows/deploy-azure.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'AzureWorkshopApp/**'
   workflow_dispatch:
 
 jobs:
