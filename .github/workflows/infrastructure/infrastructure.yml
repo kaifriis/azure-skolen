@@ -1,0 +1,41 @@
+name: Infrastructure Deployment
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'bicep/**'
+      - '.github/workflows/infrastructure/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'bicep/**'
+      - '.github/workflows/infrastructure/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Deploy Bicep
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          scope: 'Resource Group'
+          resourceGroupName: ${{ secrets.RESOURCE_GROUP_NAME }}
+          template: ./bicep/main.bicep
+          parameters: ./bicep/parameters.json

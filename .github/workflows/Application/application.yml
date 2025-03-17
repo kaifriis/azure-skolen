@@ -1,0 +1,47 @@
+name: Application Deployment
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/application/build-deploy-app.yml'
+      - '.github/workflows/application/deploy-azure.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/application/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-application:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Build and Test
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet test
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Deploy Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.WEBAPP_NAME }}
+          package: ./publish
