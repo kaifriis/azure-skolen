@@ -1,47 +1,44 @@
-name: CI/CD Pipeline
+# name: CI/CD App Pipeline
 
-permissions:
-  id-token: write
-  contents: read
+# permissions:
+#   id-token: write
+#   contents: read
 
-on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'AzureWorkshopApp/**'
-      - '.github/workflows/build-deploy-app.yml'
-      - '.github/workflows/deploy-azure.yml'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'AzureWorkshopApp/**'
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: [ main ]
+#     paths:
+#       - 'AzureWorkshopApp/**'
+#       - '.github/workflows/build-deploy-app.yml'
+#       - '.github/workflows/deploy-azure.yml'
+#   pull_request:
+#     branches: [ main ]
+#     paths:
+#       - 'AzureWorkshopApp/**'
+#   workflow_dispatch:
 
-jobs:
-  validate-infrastructure:
-    uses: ./.github/workflows/bicep-test-validate.yml
-    with:
-      environment: 'dev'
-      location: 'norwayeast'
-    secrets: inherit
+# jobs:
+#   validate-infrastructure:
+#     uses: ./.github/workflows/infrastructure/bicep-validate.yml
+#     secrets: inherit
 
-  build:
-    uses: ./.github/workflows/build-deploy-app.yml
+#   build:
+#     uses: ./.github/workflows/application/build-deploy-app.yml
 
-  test:
-    uses: ./.github/workflows/test.yml
-    needs: [build]
+#   test:
+#     uses: ./.github/workflows/application/test.yml
+#     needs: [build]
 
-  deploy-test:
-    uses: ./.github/workflows/deploy-azure.yml
-    with:
-      releaseType: 'TEST'  # input parameter
-    secrets: inherit
-    needs: [test]
+#   deploy-test:
+#     uses: ./.github/workflows/application/deploy-azure.yml
+#     with:
+#       releaseType: 'TEST'  # input parameter
+#     secrets: inherit
+#     needs: [test]
 
-  deploy-prod:
-      uses: ./.github/workflows/deploy-azure.yml
-      with:
-        releaseType: 'production'
-      secrets: inherit
-      needs: [deploy-test]
+#   deploy-prod:
+#       uses: ./.github/workflows/application/deploy-azure.yml
+#       with:
+#         releaseType: 'production'
+#       secrets: inherit
+#       needs: [deploy-test]

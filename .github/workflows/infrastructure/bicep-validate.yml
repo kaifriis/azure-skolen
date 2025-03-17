@@ -67,7 +67,7 @@ jobs:
             additionalArguments: --what-if
                 
         - name: Deploy Bicep
-          if: success()
+          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
           id: deploy
           uses: Azure/arm-deploy@v1
           with:

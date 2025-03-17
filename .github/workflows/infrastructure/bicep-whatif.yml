@@ -94,14 +94,14 @@ jobs:
                 body: body
               });
 
-        - name: Deploy Bicep
-          id: deploy
-          uses: Azure/arm-deploy@v1
-          with:
-            scope: resourcegroup
-            resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
-            template: ./bicep/main.bicep
-            parameters: 
-              environmentName=${{ env.ENVIRONMENT_NAME }}
-              location=${{ env.AZURE_LOCATION }}
-            failOnStdErr: false
+        # - name: Deploy Bicep
+        #   id: deploy
+        #   uses: Azure/arm-deploy@v1
+        #   with:
+        #     scope: resourcegroup
+        #     resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+        #     template: ./bicep/main.bicep
+        #     parameters: 
+        #       environmentName=${{ env.ENVIRONMENT_NAME }}
+        #       location=${{ env.AZURE_LOCATION }}
+        #     failOnStdErr: false
