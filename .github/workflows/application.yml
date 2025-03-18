@@ -13,6 +13,8 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+  actions: read
 
 jobs:
   deploy-test:
