@@ -4,13 +4,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'AzureWorkshopApp/**'
-      - '.github/workflows/application/**'
+      - '.github/workflows/application.yml'
   pull_request:
     branches: [ main ]
     paths:
-      - 'AzureWorkshopApp/**'      
-      - '.github/workflows/application/**'
+      - '.github/workflows/application.yml'
   workflow_dispatch:
 
 permissions:
