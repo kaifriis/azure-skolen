@@ -53,6 +53,7 @@ module storage 'modules/storage.bicep' = {
   }
 }
 
-output webAppName string = webApp.name
+output webAppName string = webApp.outputs.webAppName
 output webAppHostName string = webApp.outputs.webAppHostName
 output storageAccountName string = storage.outputs.storageAccountName
+output blobContainerName string = storage.outputs.blobContainerName
