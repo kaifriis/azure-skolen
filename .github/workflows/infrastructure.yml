@@ -5,12 +5,12 @@ on:
     branches: [ main ]
     paths:
       - 'bicep/**'
-      - '.github/workflows/infrastructure/**'
+      - '.github/workflows/infrastructure.yml'
   push:
     branches: [ main ]
     paths:
       - 'bicep/**'
-      - '.github/workflows/infrastructure/**'
+      - '.github/workflows/infrastructure.yml'
   workflow_dispatch:
 
 permissions:
