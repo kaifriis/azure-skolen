@@ -41,6 +41,7 @@ jobs:
         working-directory: ./AzureWorkshopApp
         run: |
           dotnet restore
+          npm install dropzone @types/dropzone
           dotnet build --configuration Release --no-restore
           dotnet test ../AzureWorkshopAppTests/AzureWorkshopAppTests.csproj --no-restore --verbosity normal
         
