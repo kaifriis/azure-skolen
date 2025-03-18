@@ -5,19 +5,22 @@ on:
     branches: [ main ]
     paths:
       - '.github/workflows/application.yml'
+      - 'AzureWorkshop/**'
+      - 'AzureWorkshopTest/**'
   pull_request:
     branches: [ main ]
     paths:
       - '.github/workflows/application.yml'
+      - 'AzureWorkshop/**'
+      - 'AzureWorkshopTest/**'
   workflow_dispatch:
-
-permissions:
-  contents: read
-  id-token: write
-  actions: read
 
 jobs:
   deploy-test:
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
     uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'test'
@@ -25,6 +28,10 @@ jobs:
     secrets: inherit
 
   deploy-production:
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
     needs: deploy-test
     uses: ./.github/workflows/deploy-azure.yml
     with:
