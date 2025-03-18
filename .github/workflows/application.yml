@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   deploy-test:
-    uses: ./.github/workflows/application/deploy-azure.yml
+    uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'test'
       webapp_secret_name: 'TEST_WEBAPP_NAME'
@@ -26,7 +26,7 @@ jobs:
 
   deploy-production:
     needs: deploy-test
-    uses: ./.github/workflows/application/deploy-azure.yml
+    uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'production'
       webapp_secret_name: 'WEBAPP_NAME'
