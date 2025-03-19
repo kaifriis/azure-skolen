@@ -67,12 +67,12 @@ jobs:
       - name: Deploy Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ secrets[inputs.webapp_secret_name] }}
+          app-name: app${{ secrets[inputs.webapp_secret_name] }}
           package: ${{ github.workspace }}/publish
             
       - name: Health Check
         run: |
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://${{ secrets[inputs.webapp_secret_name] }}.azurewebsites.net/health)
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://app${{ secrets[inputs.webapp_secret_name] }}.azurewebsites.net/health)
           if [ "$RESPONSE" != "200" ]; then
             echo "Health check failed with status $RESPONSE"
             exit 1
