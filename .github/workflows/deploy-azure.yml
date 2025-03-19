@@ -43,8 +43,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
+      - name: Debug - Print Contexts
+        run: |
+          echo "All github context:"
+          echo '${{ toJSON(github) }}'
+          echo "All inputs context:"
+          echo '${{ toJSON(inputs) }}'
+
       - name: Print webapp_var_name
-        run: echo "webapp_var_name = '${{ inputs.webapp_var_name }}'"
+        run: |
+          echo "webapp_var_name raw = '${{ inputs.webapp_var_name }}'"
+          echo "releaseType raw = '${{ inputs.releaseType }}'"
 
       - name: Build and Test
         working-directory: ./AzureWorkshopApp
