@@ -45,8 +45,6 @@ jobs:
 
       - name: Debug - Print Contexts
         run: |
-          echo "All github context:"
-          echo '${{ toJSON(github) }}'
           echo "All inputs context:"
           echo '${{ toJSON(inputs) }}'
 
