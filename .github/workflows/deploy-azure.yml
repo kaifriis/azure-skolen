@@ -11,11 +11,11 @@ on:
         type: string
         required: true
         default: 'test'
-      webapp_secret_name:
-        description: 'Name of the secret containing webapp name'
+      webapp_var_name:
+        description: 'Name of the var containing webapp name'
         type: string
         required: true
-        default: 'TEST_WEBAPP_NAME'
+        default: 'app-azskolen-test'
 
 permissions:
   id-token: write
@@ -67,12 +67,12 @@ jobs:
       - name: Deploy Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: app${{ secrets[inputs.webapp_secret_name] }}
+          app-name: ${{ inputs.webapp_var_name }}
           package: ${{ github.workspace }}/publish
             
       - name: Health Check
         run: |
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://app${{ secrets[inputs.webapp_secret_name] }}.azurewebsites.net/health)
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://app${{ inputs.webapp_var_name }}.azurewebsites.net/health)
           if [ "$RESPONSE" != "200" ]; then
             echo "Health check failed with status $RESPONSE"
             exit 1
