@@ -44,7 +44,7 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Print webapp_var_name
-        run: echo "webapp_var_name = ${{ inputs.webapp_var_name }}"
+        run: echo "webapp_var_name = '${{ inputs.webapp_var_name }}'"
 
       - name: Build and Test
         working-directory: ./AzureWorkshopApp
