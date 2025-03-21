@@ -16,7 +16,7 @@ permissions:
 jobs:
   deploy-test-infra:
     name: Deploy Test Infrastructure
-    uses: ./.github/workflows/infrastructure/deploy-azure.yml
+    uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'test'
       webapp_var_name: 'app-azskolen-test'
@@ -25,7 +25,7 @@ jobs:
   deploy-prod-infra:
     name: Deploy Production Infrastructure
     needs: deploy-test-infra
-    uses: ./.github/workflows/infrastructure/deploy-azure.yml
+    uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'production'
       webapp_var_name: 'app-azskolen-prod'
