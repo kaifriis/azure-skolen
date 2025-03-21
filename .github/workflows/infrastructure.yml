@@ -19,7 +19,6 @@ jobs:
     uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'test'
-      webapp_var_name: 'app-azskolen-test'
     secrets: inherit
 
   deploy-prod-infra:
@@ -28,6 +27,5 @@ jobs:
     uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'production'
-      webapp_var_name: 'app-azskolen-prod'
     secrets: inherit
 
