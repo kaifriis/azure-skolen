@@ -33,5 +33,4 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
 }
 
 output storageAccountName string = storageAccount.name
-output storageAccountKey string = storageAccount.listKeys().keys[0].value
 output blobContainerName string = containerName
