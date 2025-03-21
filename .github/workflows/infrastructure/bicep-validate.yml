@@ -10,12 +10,6 @@ env:
   RESOURCE_GROUP_NAME: 'rg-azskolen-test'
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
   workflow_call:
 
