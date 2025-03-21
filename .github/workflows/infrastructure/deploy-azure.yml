@@ -1,8 +1,6 @@
 name: Deploy to Azure
 
 on:
-  release:
-    types: [published]
   workflow_dispatch: 
   workflow_call:
     inputs:
@@ -18,8 +16,9 @@ on:
         default: 'app-azskolen-test'
 
 permissions:
-  id-token: write
   contents: read
+  id-token: write
+  actions: read
 
 jobs:
   deploy:
