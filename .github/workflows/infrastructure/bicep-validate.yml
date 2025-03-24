@@ -5,17 +5,11 @@ permissions:
   contents: read
 
 env:
-  ENVIRONMENT_NAME: 'TEST'
+  ENVIRONMENT_NAME: 'test'
   AZURE_LOCATION: 'norwayeast'
   RESOURCE_GROUP_NAME: 'rg-azskolen-test'
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
   workflow_call:
 
@@ -54,7 +48,9 @@ jobs:
               az deployment group validate \
                 --name validate-${{ github.run_id }} \
                 --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-                --template-file ./bicep/main.bicep 
+                --template-file ./bicep/main.bicep \
+                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} location=${{ env.AZURE_LOCATION }}
+
         
         - name: What-If Deployment
           uses: azure/arm-deploy@v1
