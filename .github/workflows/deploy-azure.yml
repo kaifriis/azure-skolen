@@ -52,11 +52,11 @@ jobs:
           with:
             inlineScript: |
               set -e
-              echo "Validating Bicep template ${{env.ENVIRONMENT_NAME}}"
+              echo "Validating Bicep template: rs-grp ${{env.RESOURCE_GROUP}}"
               az deployment group validate \
-                --name validate-${{ github.run_id }} \
                 --resource-group ${{ env.RESOURCE_GROUP }} \
-                --template-file ./bicep/main.bicep 
+                --template-file ./bicep/main.bicep \
+                --parameters environment=${{ env.ENVIRONMENT_NAME }} location=${{ env.AZURE_LOCATION }}
         
         - name: What-If Deployment
           uses: azure/arm-deploy@v1
