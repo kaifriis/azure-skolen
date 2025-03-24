@@ -5,7 +5,7 @@
 // @allowed decorator restricts the possible values to a predefined set
 @allowed([
   'test'
-  'prod'
+  'production'
 ])
 param environment string
 
