@@ -21,7 +21,7 @@ param webSiteName string = 'app-${uniqueString(resourceGroup().id)}'
 @minLength(3)
 @maxLength(20)
 @description('The name of the Azure Storage account. May contain numbers and lowercase letters only!')
-param storageAccountName string = 'st-azskl-images'
+param storageAccountName string = 'stazsklimages'
 
 // The SKU of the App Service Plan
 @description('The SKU of the App Service Plan')

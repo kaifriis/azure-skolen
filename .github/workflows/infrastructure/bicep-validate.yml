@@ -5,7 +5,7 @@ permissions:
   contents: read
 
 env:
-  ENVIRONMENT_NAME: 'TEST'
+  ENVIRONMENT_NAME: 'test'
   AZURE_LOCATION: 'norwayeast'
   RESOURCE_GROUP_NAME: 'rg-azskolen-test'
 

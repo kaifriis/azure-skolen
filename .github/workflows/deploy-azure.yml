@@ -41,7 +41,7 @@ jobs:
           with:
             inlineScript: |
               set -e
-              echo "Running Bicep build..."
+              echo "Running Bicep build ..."
               az bicep build --file bicep/main.bicep
               echo "Running Bicep lint..."
               az bicep lint --file bicep/main.bicep
@@ -52,7 +52,7 @@ jobs:
           with:
             inlineScript: |
               set -e
-              echo "Validating Bicep template..."
+              echo "Validating Bicep template ${{env.ENVIRONMENT_NAME}}"
               az deployment group validate \
                 --name validate-${{ github.run_id }} \
                 --resource-group ${{ env.RESOURCE_GROUP }} \
