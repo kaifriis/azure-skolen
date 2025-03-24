@@ -49,7 +49,7 @@ jobs:
                 --name validate-${{ github.run_id }} \
                 --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
                 --template-file ./bicep/main.bicep \
-                --parameters environment=${{ env.ENVIRONMENT_NAME }} location=${{ env.AZURE_LOCATION }}
+                --parameters environmentName=${{ env.ENVIRONMENT_NAME }} location=${{ env.AZURE_LOCATION }}
 
         
         - name: What-If Deployment
@@ -58,7 +58,7 @@ jobs:
             scope: resourcegroup
             resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
             template: ./bicep/main.bicep
-            parameters: environment=${{ env.ENVIRONMENT_NAME }} location=${{ env.AZURE_LOCATION }}
+            parameters: environmentName=${{ env.ENVIRONMENT_NAME }} location=${{ env.AZURE_LOCATION }}
             deploymentMode: Validate
             additionalArguments: --what-if
                 
