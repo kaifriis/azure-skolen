@@ -27,27 +27,3 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
 
 output webAppName string = webApp.name
 output webAppHostName string = webApp.properties.defaultHostName
-
-// resource webApp 'Microsoft.Web/sites@2022-09-01' = {
-//   name: websiteNameWithEnvironment
-//   location: location
-//   tags: tags
-//   kind: 'app'
-//   properties: {
-//     serverFarmId: appServicePlan.id
-//     httpsOnly: true
-//     siteConfig: {
-//       minTlsVersion: '1.2'
-//       appSettings: [
-//         {
-//           name: 'AzureStorageConfig:ImageContainer'
-//           value: blobContainerName
-//         }
-//         {
-//           name: 'AzureStorageConfig:ConnectionString'
-//           value: storageAccount.listKeys().keys[0].value
-//         }
-//       ]
-//     }
-//   }
-// }
