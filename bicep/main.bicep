@@ -1,8 +1,12 @@
-@allowed([
-  'test'
-  'production'
-])
+@description('The environment (test or prod)')
 param environment string
+
+@description('The Azure region for deployment')
+param location string
+
+// Add your resource definitions here
+
+// Add additional resources and configurations as needed
 
 @minLength(2)
 @maxLength(36)
@@ -16,9 +20,6 @@ param storageAccountName string = 'stazsklimages'
 
 @description('The SKU of the App Service Plan')
 param appServiceSku string = 'F1'
-
-@description('The location in which the Azure Storage resources should be deployed.')
-param location string = resourceGroup().location
 
 var servicePlanName = 'asp-${webSiteName}'
 var blobContainerName = 'ci-image-${webSiteName}'
@@ -51,7 +52,7 @@ module storage 'modules/storage.bicep' = {
     storageAccountName: storageAccountNameWithEnvironment
     containerName: blobContainerName
     tags: tags
-    webAppPrincipalId: webApp.outputs.principalId
+    managedIdentityPrincipalId: webApp.outputs.principalId
   }
 }
 
