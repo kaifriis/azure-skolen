@@ -38,17 +38,26 @@ jobs:
 
         - name: Bicep lint
           uses: azure/cli@v1
+          continue-on-error: true
           with:
             inlineScript: |
               set -e
               echo "Running Bicep build ..."
               az bicep build --file bicep/main.bicep
+              if [ $? -ne 0 ]; then
+                echo "::error::Bicep build failed"
+                exit 1
+              fi
               echo "Running Bicep lint..."
               az bicep lint --file bicep/main.bicep
+              if [ $? -ne 0 ]; then
+                echo "::error::Bicep lint failed"
+                exit 1
+              fi
 
         - name: Bicep Validate
-          if: success()
           uses: Azure/cli@v1
+          continue-on-error: true
           with:
             inlineScript: |
               set -e
@@ -57,6 +66,10 @@ jobs:
                 --resource-group ${{ env.RESOURCE_GROUP }} \
                 --template-file ./bicep/main.bicep \
                 --parameters environment=${{ env.ENVIRONMENT_NAME }} location=${{ env.AZURE_LOCATION }}
+              if [ $? -ne 0 ]; then
+                echo "::error::Bicep validation failed"
+                exit 1
+              fi
         
         - name: What-If Deployment
           uses: azure/arm-deploy@v1
@@ -69,7 +82,7 @@ jobs:
             additionalArguments: --what-if
                 
         - name: Deploy Bicep
-          if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+          if: (success() && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'))
           id: deploy
           uses: Azure/arm-deploy@v1
           with:
