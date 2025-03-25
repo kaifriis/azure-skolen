@@ -25,12 +25,10 @@ jobs:
     uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'test'
-      webapp_var_name: 'app-azskolen-test'
     secrets: inherit
   deploy-production:
     needs: deploy-test
     uses: ./.github/workflows/deploy-azure.yml
     with:
       releaseType: 'production'
-      webapp_var_name: 'app-azskolen-test'
     secrets: inherit
