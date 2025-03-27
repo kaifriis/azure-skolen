@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -18,11 +20,9 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore dependencies
+      working-directory: .
       run: dotnet restore
 
     - name: Run tests
-      run: |
-        dotnet test AzureWorkshopAppTests/AzureWorkshopAppTests.csproj\
-          --configuration Release\
-          --no-restore\
-          --verbosity normal
+      working-directory: .
+      run: dotnet test AzureWorkshopAppTests/AzureWorkshopAppTests.csproj --configuration Release --no-restore --verbosity normal

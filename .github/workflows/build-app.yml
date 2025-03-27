@@ -67,3 +67,4 @@ jobs:
         name: dotnet-app-${{ inputs.releasetype }}
         path: ./publish
         retention-days: 5
+
