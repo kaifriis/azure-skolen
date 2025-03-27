@@ -23,12 +23,12 @@ permissions:
 jobs:
   deploy-test:
     uses: ./.github/workflows/build-deploy-app.yml
-#    with:
-#      releaseType: 'test'
+    with:
+      releasetype: 'test'
     secrets: inherit
   # deploy-production:
   #   needs: deploy-test
   #   uses: ./.github/workflows/deploy-azure.yml
   #   with:
-  #     releaseType: 'production'
+  #     releasetype: 'production'
   #   secrets: inherit

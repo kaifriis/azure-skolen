@@ -1,12 +1,28 @@
 name: Build and Deploy .NET Web App
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
+    inputs:
+      releasetype:
+        description: 'Type of release (test/production)'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - production
   workflow_call:
+    inputs:
+      releasetype:
+        required: true
+        type: string
+        description: 'Type of release (test/production)'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      build_status: ${{ job.status }}
 
     steps:
     - name: Checkout code
@@ -33,25 +49,21 @@ jobs:
       run: echo "Now building the application..."
 
     - name: Build
+      id: build
       run: dotnet build --configuration Release --no-restore
       
     - name: Run Tests
-      uses: ./.github/workflows/Application/test.yml
+      if: success()
+      uses: ./.github/workflows/test.yml
 
     - name: Publish
+      if: success()
       run: dotnet publish ./AzureWorkshopApp/AzureWorkshopApp.csproj --configuration Release --output ./publish --no-build
 
     - name: Upload artifact
+      if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: dotnet-app
+        name: dotnet-app-${{ inputs.releasetype }}
         path: ./publish
-
-    # - name: Publish
-    #   run: dotnet publish ./AzureWorkshopApp/AzureWorkshopApp.csproj --configuration Release --output ./publish --no-build
-
-    # - name: Upload artifact
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: dotnet-app
-    #     path: ./publish
+        retention-days: 5
