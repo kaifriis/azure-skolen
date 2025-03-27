@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   deploy-test:
-    uses: ./.github/workflows/application/build-deploy-app.yml
+    uses: ./.github/workflows/build-deploy-app.yml
 #    with:
 #      releaseType: 'test'
     secrets: inherit
