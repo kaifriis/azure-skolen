@@ -2,6 +2,7 @@ name: Build .NET App
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   build:

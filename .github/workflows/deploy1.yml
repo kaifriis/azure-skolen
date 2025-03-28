@@ -30,7 +30,7 @@ jobs:
         path: ./publish       # Local path where artifacts will be downloaded
 
     # Deploy the application to Azure Web App
-    # This step requires prior Azure authentication from azure-login.yml
+    # This step requires prior Azure authentication from 'Azure login step'
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
