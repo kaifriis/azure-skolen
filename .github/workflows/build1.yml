@@ -1,0 +1,44 @@
+name: Build .NET App
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Install npm packages
+      working-directory: ./AzureWorkshopApp
+      run: npm install
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./AzureWorkshopApp
+        
+    - name: Echo build step
+      run: echo "Now building the application..."
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      working-directory: ./AzureWorkshopApp
+        
+    - name: Publish
+      run: dotnet publish --no-build --configuration Release --output ./publish
+      working-directory: ./AzureWorkshopApp
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-app
+        path: ./AzureWorkshopApp/publish
+        

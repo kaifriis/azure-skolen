@@ -2,6 +2,7 @@ param location string
 param storageAccountName string
 param containerName string
 param tags object = {}
+param managedIdentityPrincipalId string // Rename from webAppPrincipalId
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageAccountName
@@ -29,6 +30,16 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
   name: containerName
   properties: {
     publicAccess: 'None'
+  }
+}
+
+module roleAssignment 'role-assignment.bicep' = {
+  name: 'blob-role-assignment'
+  params: {
+    principalId: managedIdentityPrincipalId
+    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
+    storageAccountName: storageAccount.name
+    principalType: 'SystemAssignedIdentity'
   }
 }
 

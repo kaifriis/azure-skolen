@@ -21,16 +21,22 @@ permissions:
   actions: read
 
 jobs:
-  deploy-test:
-    uses: ./.github/workflows/deploy-azure.yml
+  publish-test:
+    uses: ./.github/workflows/build-app.yml
     with:
-      releaseType: 'test'
-      webapp_var_name: 'app-azskolen-test'
+      releasetype: 'test'
     secrets: inherit
-  deploy-production:
-    needs: deploy-test
-    uses: ./.github/workflows/deploy-azure.yml
+    
+  # publish-production:
+  #   needs: publish-test
+  #   uses: ./.github/workflows/deploy-azure.yml
+  #   with:
+  #     releasetype: 'production'
+  #   secrets: inherit
+
+  deploy:
+    needs: publish-test
+    uses: ./.github/workflows/deploy-to-azure.yml
     with:
-      releaseType: 'production'
-      webapp_var_name: 'app-azskolen-test'
+      releasetype: 'test'
     secrets: inherit
