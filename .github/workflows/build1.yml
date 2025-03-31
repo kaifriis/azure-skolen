@@ -37,7 +37,13 @@ jobs:
         
     - name: Install npm packages
       working-directory: ./AzureWorkshopApp
-      run: npm ci
+      run: |
+        npm ci
+        npm install --save-dev @types/dropzone
+        
+    - name: Build TypeScript
+      working-directory: ./AzureWorkshopApp
+      run: npm run build
         
     - name: Restore dependencies
       run: dotnet restore
