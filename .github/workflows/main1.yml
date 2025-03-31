@@ -21,8 +21,12 @@ jobs:
   build:
     uses: ./.github/workflows/build1.yml  # References our build workflow. It compiles the app and creates artifacts
 
+  test:
+      uses: ./.github/workflows/test.yml
+      needs: [build]
+
   # Second job: Deploy using yaml
   deploy:
-    needs: build  # Waits for the build job to complete
     uses: ./.github/workflows/deploy1.yml  # References our deployment workflow
     secrets: inherit  # Inherits secrets for Azure deployment
+    needs: [test]
