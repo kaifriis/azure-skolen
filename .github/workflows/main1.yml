@@ -1,32 +1,57 @@
-# This is the main orchestrator workflow that coordinates the entire CI/CD pipeline
-# It demonstrates how to organize deployments into separate, reusable workflows
-name: Main Workflow
+# Main orchestrator workflow for our CI/CD pipeline
+# This workflow coordinates building, testing, and deploying our application
+name: CI/CD Pipeline
 
-# Add permissions block at workflow level
+# Define permissions needed for Azure OIDC authentication
 permissions:
-  id-token: write    # Required for OIDC authentication with Azure
-  contents: read     # Required for checking out code
+  id-token: write    # Required for Azure OIDC connection
+  contents: read     # Needed to read repository contents
 
 # Define when this workflow should run
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main        # Runs on every push to main branch
   pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches:
+      - main        # Runs when PRs target main branch
+  workflow_dispatch: # Enables manual triggering from GitHub UI
 
-# Jobs run in parallel by default unless 'needs' is specified
+# Define the sequence of jobs in our pipeline
 jobs:
-  # First job: Build the .NET application
+  # Step 1: Build the application
+  # This job compiles our code and creates artifacts
   build:
-    uses: ./.github/workflows/build1.yml  # References our build workflow. It compiles the app and creates artifacts
+    uses: ./.github/workflows/build1.yml  # References our build workflow
 
+
+  # Step 2: Run automated tests
+  # This ensures our code changes haven't broken anything
   test:
-      uses: ./.github/workflows/test.yml
-      needs: [build]
+    uses: ./.github/workflows/test.yml     # References our test workflow
+    needs: [build]                         # Won't run until build succeeds
 
-  # Second job: Deploy using yaml
-  deploy:
-    uses: ./.github/workflows/deploy1.yml  # References our deployment workflow
-    secrets: inherit  # Inherits secrets for Azure deployment
-    needs: [test]
+  # Step 3: Deploy to test environment
+  # This gives us a chance to verify changes in a safe environment
+  deploy-test:
+    uses: ./.github/workflows/deploy-azure.yml
+    with:
+      releaseType: 'test'                 # Specifies production environment
+    secrets: inherit                      # Passes through Github repository secrets
+    needs: [test]                         # Won't run until tests pass
+
+  # Step 4: Deploy to production
+  # Final step - only runs after successful test deployment
+  deploy-prod:
+    uses: ./.github/workflows/deploy-azure.yml
+    with:
+      releaseType: 'production'            # Specifies production environment
+    secrets: inherit                       # Passes through repository secrets
+    needs: [deploy-test]                   # Ensures test deployment succeeded
+
+# Main Points:
+# 1. Pipeline stages: Build → Test → Deploy Test → Deploy Production
+# 2. Each stage must succeed before the next can start
+# 3. Uses reusable workflows for maintainability
+# 4. Separates environments for safety
+# 5. Automated testing ensures code quality

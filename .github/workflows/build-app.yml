@@ -2,21 +2,7 @@ name: Build and Deploy .NET Web App
 
 on:
   workflow_dispatch:
-    inputs:
-      releasetype:
-        description: 'Type of release (test/production)'
-        required: true
-        default: 'test'
-        type: choice
-        options:
-          - test
-          - production
   workflow_call:
-    inputs:
-      releasetype:
-        required: true
-        type: string
-        description: 'Type of release (test/production)'
 
 jobs:
   build:
@@ -64,7 +50,7 @@ jobs:
       if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: dotnet-app-${{ inputs.releasetype }}
+        name: app-azureskolen
         path: ./publish
         retention-days: 5
 

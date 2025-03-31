@@ -27,12 +27,12 @@ jobs:
       releasetype: 'test'
     secrets: inherit
     
-  # publish-production:
-  #   needs: publish-test
-  #   uses: ./.github/workflows/deploy-azure.yml
-  #   with:
-  #     releasetype: 'production'
-  #   secrets: inherit
+  publish-production:
+    needs: publish-test
+    uses: ./.github/workflows/deploy-azure.yml
+    with:
+      releasetype: 'production'
+    secrets: inherit
 
   deploy:
     needs: publish-test
