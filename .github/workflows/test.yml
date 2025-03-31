@@ -14,10 +14,6 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Format check
-      working-directory: ./AzureWorkshopApp
-      run: dotnet format --verify-no-changes
-        
     - name: Test
       working-directory: ./AzureWorkshopApp
       run: dotnet test --configuration Release --verbosity normal

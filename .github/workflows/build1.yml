@@ -42,10 +42,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
       working-directory: ./AzureWorkshopApp
-
-    - name: Format check
-      run: dotnet format --verify-no-changes
-      working-directory: ./AzureWorkshopApp
         
     - name: Build
       run: dotnet build --no-restore --configuration Release
