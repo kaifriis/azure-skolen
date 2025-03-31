@@ -3,6 +3,8 @@ name: Build .NET App
 on:
   workflow_call:
   workflow_dispatch:
+  push:
+    branches: [ bicep ]  # remove, debug 
 
 jobs:
   build:
