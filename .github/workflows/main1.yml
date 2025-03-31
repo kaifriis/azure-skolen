@@ -31,27 +31,26 @@ jobs:
     uses: ./.github/workflows/test.yml     # References our test workflow
     needs: [build]                         # Won't run until build succeeds
 
-  # Step 3: Deploy to test environment
+  # Step 3: Publish to Github 
+  # This will publish the built app as an artifact in Github
+  publish:
+    uses: ./.github/workflows/publish.yml     # References our publish workflow
+    needs: [test]                             # Won't run until test succeeds
+
+  # Step 4: Deploy to test environment
   # This gives us a chance to verify changes in a safe environment
   deploy-test:
-    uses: ./.github/workflows/deploy-azure.yml
+    uses: ./.github/workflows/deploy1.yml
     with:
       releaseType: 'test'                 # Specifies production environment
     secrets: inherit                      # Passes through Github repository secrets
-    needs: [test]                         # Won't run until tests pass
+    needs: [publish]                         # Won't run until tests pass
 
-  # Step 4: Deploy to production
+  # Step 5: Deploy to production
   # Final step - only runs after successful test deployment
   deploy-prod:
-    uses: ./.github/workflows/deploy-azure.yml
+    uses: ./.github/workflows/deploy1.yml
     with:
       releaseType: 'production'            # Specifies production environment
     secrets: inherit                       # Passes through repository secrets
     needs: [deploy-test]                   # Ensures test deployment succeeded
-
-# Main Points:
-# 1. Pipeline stages: Build → Test → Deploy Test → Deploy Production
-# 2. Each stage must succeed before the next can start
-# 3. Uses reusable workflows for maintainability
-# 4. Separates environments for safety
-# 5. Automated testing ensures code quality

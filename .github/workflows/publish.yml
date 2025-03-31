@@ -1,0 +1,27 @@
+name: Publish
+
+on:
+  workflow_call:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Publish
+      working-directory: ./AzureWorkshopApp
+      run: dotnet publish --configuration Release --output ./publish
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-app-${{ github.sha }}
+        path: ./AzureWorkshopApp/publish
+        compression-level: 9
+        retention-days: 5
