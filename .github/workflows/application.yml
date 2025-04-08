@@ -1,42 +1,50 @@
-name: Application Deployment
+name: Build .NET App
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - '.github/workflows/application.yml'
-      - 'AzureWorkshop/**'
-      - 'AzureWorkshopTest/**'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - '.github/workflows/application.yml'
-      - 'AzureWorkshop/**'
-      - 'AzureWorkshopTest/**'
+  workflow_call:
   workflow_dispatch:
-    
-permissions:
-  contents: read
-  id-token: write
-  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  publish-test:
-    uses: ./.github/workflows/build-app.yml
-    with:
-      releasetype: 'test'
-    secrets: inherit
+  build:
+    runs-on: ubuntu-latest
     
-  publish-production:
-    needs: publish-test
-    uses: ./.github/workflows/deploy-azure.yml
-    with:
-      releasetype: 'production'
-    secrets: inherit
-
-  deploy:
-    needs: publish-test
-    uses: ./.github/workflows/deploy-to-azure.yml
-    with:
-      releasetype: 'test'
-    secrets: inherit
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: ${{ runner.os }}-nuget-
+        
+    - name: Cache npm packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-node-
+        
+    - name: Install npm packages
+      working-directory: ./AzureWorkshopApp
+      run: |
+        npm ci
+        npm install --save-dev @types/dropzone
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./AzureWorkshopApp
+        
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      working-directory: ./AzureWorkshopApp
