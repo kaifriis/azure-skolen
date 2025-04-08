@@ -41,7 +41,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: dotnet-app    # Name of the artifact to download
+          name: dotnet-app-${{ github.sha }}    # Updated to match the artifact name format in publish.yml
           path: ./publish     # Where to place the files locally
 
       # Step 3: Deploy to Azure Web App
