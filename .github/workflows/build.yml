@@ -1,20 +1,13 @@
-name: Build .NET App
+name: Build
 
 on:
   workflow_call:
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
       
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -37,14 +30,12 @@ jobs:
         
     - name: Install npm packages
       working-directory: ./AzureWorkshopApp
-      run: |
-        npm ci
-        npm install --save-dev @types/dropzone
+      run: npm ci
         
     - name: Restore dependencies
-      run: dotnet restore
       working-directory: ./AzureWorkshopApp
+      run: dotnet restore
         
     - name: Build
-      run: dotnet build --no-restore --configuration Release
       working-directory: ./AzureWorkshopApp
+      run: dotnet build --no-restore --configuration Release

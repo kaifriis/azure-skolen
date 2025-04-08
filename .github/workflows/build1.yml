@@ -4,6 +4,10 @@ on:
   workflow_call:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,28 +21,30 @@ jobs:
       with:
         dotnet-version: '8.0.x'
         
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: ${{ runner.os }}-nuget-
+        
+    - name: Cache npm packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-node-
+        
     - name: Install npm packages
       working-directory: ./AzureWorkshopApp
-      run: npm install
+      run: |
+        npm ci
+        npm install --save-dev @types/dropzone
         
     - name: Restore dependencies
       run: dotnet restore
       working-directory: ./AzureWorkshopApp
         
-    - name: Echo build step
-      run: echo "Now building the application..."
-
     - name: Build
       run: dotnet build --no-restore --configuration Release
       working-directory: ./AzureWorkshopApp
-        
-    - name: Publish
-      run: dotnet publish --no-build --configuration Release --output ./publish
-      working-directory: ./AzureWorkshopApp
-        
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: dotnet-app
-        path: ./AzureWorkshopApp/publish
-        

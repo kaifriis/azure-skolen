@@ -1,26 +1,19 @@
-name: Run Tests
+name: Test
 
 on:
-  workflow_dispatch:
   workflow_call:
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
+    - uses: actions/checkout@v4
+      
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Run tests
-      run: dotnet test --configuration Release --no-restore --verbosity normal
+    - name: Test
+      working-directory: ./AzureWorkshopApp
+      run: dotnet test --configuration Release --verbosity normal
