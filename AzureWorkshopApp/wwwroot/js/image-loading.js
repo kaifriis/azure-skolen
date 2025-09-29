@@ -109,6 +109,7 @@ var createImageElement = function (url) {
     return imageWrapper;
 };
 /* Dropzone */
+//npm install dropzone
 // "imageUpload" is the camelized version of the HTML element's ID
 Dropzone.options.imageUpload = {
     paramName: "files", // The name that will be used to transfer the file
